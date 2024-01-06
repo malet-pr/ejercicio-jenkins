@@ -24,9 +24,6 @@ pipeline {
             steps {
                 script {
                     dir('vote') {
-                        sh 'apt install python3-Flask'
-                        sh 'apt install python3-Redis'
-                        sh 'apt install python3-gunicorn'
                         sh 'python3 app.py'
                     }
                 }
