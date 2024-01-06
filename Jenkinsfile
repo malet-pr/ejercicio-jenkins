@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        GITHUB_CREDENTIALS = credentials('github-credentials')
+    }
+
     stages {
         stage('Initialization') {
             steps {
@@ -15,7 +19,10 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    checkout([$class: 'GitSCM', branches: [[name: params.BRANCH]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/malet-pr/ejercicio-jenkins.git']]])
+                    checkout([$class: 'GitSCM', branches: [[name: params.BRANCH]], 
+                            doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
+                            userRemoteConfigs: [[url: 'https://github.com/malet-pr/ejercicio-jenkins.git']],
+                            credentialsId: GITHUB_CREDENTIALS])
                 }
             }
         }
