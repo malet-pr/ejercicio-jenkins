@@ -24,7 +24,9 @@ pipeline {
             steps {
                 script {
                     dir('vote') {
-                        sh 'pip install --no-cache-dir -r requirements.txt'
+                        sh 'apt install python3-Flask'
+                        sh 'apt install python3-Redis'
+                        sh 'apt install python3-gunicorn'
                         sh 'python3 app.py'
                     }
                 }
@@ -32,3 +34,5 @@ pipeline {
         }
     }
 }
+
+
