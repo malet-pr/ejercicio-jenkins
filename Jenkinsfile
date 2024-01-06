@@ -1,16 +1,24 @@
 pipeline {
     agent any
-    
-    parameters {
-        choice(name: 'BRANCH', choices: ['desarrollo', 'produccion'], description: 'Seleccione la rama para desplegar')
-    }
-    
+
     stages {
-        stage('Checkout') {
+        stage('Initialization') {
             steps {
-                git 'https://github.com/malet-pr/ejercicio-jenkins.git'
+                script {
+                    parameters {
+                        choice(name: 'BRANCH', choices: ['desarrollo', 'produccion'], description: 'Seleccione la rama para desplegar')
+                    }
+                }
             }
         }
-        
+
+        stage('Checkout') {
+            steps {
+                script {
+                    checkout([$class: 'GitSCM', branches: [[name: params.BRANCH]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/malet-pr/ejercicio-jenkins.git']]])
+                }
+            }
+        }
     }
 }
+
