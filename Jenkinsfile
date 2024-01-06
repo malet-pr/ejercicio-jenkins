@@ -3,8 +3,9 @@ pipeline {
 
     environment {
         GITHUB_CREDENTIALS = credentials('github-credentials')
-        DOCKERHUB_USERNAME = credentials('dockerhub-credentials').username
-        DOCKERHUB_PASSWORD = credentials('dockerhub-credentials').password
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+        DOCKERHUB_USERNAME = DOCKERHUB_CREDENTIALS.username
+        DOCKERHUB_PASSWORD = DOCKERHUB_CREDENTIALS.password
         DOCKER_IMAGE_NAME_VOTE = "${DOCKERHUB_USERNAME}/vote:latest"
         DOCKER_CONTAINER_NAME_VOTE = 'vote'
     }
