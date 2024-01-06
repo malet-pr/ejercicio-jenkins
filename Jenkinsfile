@@ -39,7 +39,36 @@ pipeline {
                 }
             }
         }
+        stage('Run Tests') {
+            steps {
+                script {
+                    docker.image(DOCKER_IMAGE_NAME_VOTE).inside("--workdir /app") {
+                        sh 'python -m unittest discover'
+                    }
+                }
+            }
+        }
     }
+
+/*  ESTA PARTE VA SI PASAN LOS TESTS DE TODAS LAS APPS
+    post {
+        success {
+            script {
+                docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                    docker.image(DOCKER_IMAGE_NAME_VOTE).push()
+                }
+                echo 'Todos los tests pasaron, se publicó la imagen en DockerHub.'
+            }
+        }
+
+        always {
+            script {
+                docker.image(DOCKER_IMAGE_NAME_VOTE).stop()
+            }
+        }
+    }
+*/
+
 }
 
 
