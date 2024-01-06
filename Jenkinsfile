@@ -4,6 +4,10 @@ pipeline {
     parameters {
         choice(name: 'BRANCH', choices: ['desarrollo', 'produccion'], description: 'Seleccione la rama para desplegar')
     }
+
+    tools {
+        git 'Default' 
+    }
     
     stages {
         stage('Checkout') {
