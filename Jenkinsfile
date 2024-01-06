@@ -35,7 +35,7 @@ pipeline {
         stage('Arrancar el contenedor de vote-app') {
             steps {
                 script {
-                    docker.image(DOCKER_IMAGE_NAME_VOTE).run("-p 5000:80", "--name $DOCKER_CONTAINER_NAME_VOTE -d")
+                    docker.image(DOCKER_IMAGE_NAME_VOTE).run("-p 5000:80 --name $DOCKER_CONTAINER_NAME_VOTE -d")
                 }
             }
         }
