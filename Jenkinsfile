@@ -24,8 +24,7 @@ pipeline {
             steps {
                 script {
                     dir('vote') {
-                        sh 'pip install --no-cache-dir -r requirements.txt'
-                        sh 'python3 app.py'
+                        sh 'python app.py'
                     }
                 }
             }
