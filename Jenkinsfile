@@ -3,10 +3,14 @@ pipeline {
 
     environment {
         GITHUB_CREDENTIALS = credentials('github-credentials')
+        DOCKERHUB_USERNAME = credentials('dockerhub-credentials-id').username
+        DOCKERHUB_PASSWORD = credentials('dockerhub-credentials-id').password
+        DOCKER_IMAGE_NAME_VOTE = "${DOCKERHUB_USERNAME}/vote:latest"
+        DOCKER_CONTAINER_NAME_VOTE = 'vote'
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout repositorio') {
             steps {
                 script {
                     checkout([$class: 'GitSCM', 
@@ -20,12 +24,17 @@ pipeline {
                 }
             }
         }
-        stage('Construir "vote" app') {
+        stage('Construir imagen de vote-app') {
             steps {
                 script {
-                    dir('vote') {
-                        sh 'python3 app.py'
-                    }
+                    docker.build(DOCKER_IMAGE_NAME_VOTE, "./vote")
+                }
+            }
+        }
+        stage('Arrancar el contenedor de vote-app') {
+            steps {
+                script {
+                    docker.image(DOCKER_IMAGE_NAME_VOTE).run("-p 5000:80", "--name $DOCKER_CONTAINER_NAME_VOTE -d")
                 }
             }
         }
