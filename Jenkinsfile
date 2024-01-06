@@ -20,5 +20,14 @@ pipeline {
                 }
             }
         }
+        stage('Construir "vote" app') {
+            steps {
+                script {
+                    dir('vote') {
+                        sh 'cd python build.py'
+                    }
+                }
+            }
+        }
     }
 }
