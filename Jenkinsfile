@@ -50,8 +50,9 @@ pipeline {
         }
     }
 
-/*  ESTA PARTE VA SI PASAN LOS TESTS DE TODAS LAS APPS
+
     post {
+        /*  ESTA PARTE VA SI PASAN LOS TESTS DE TODAS LAS APPS
         success {
             script {
                 docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
@@ -60,15 +61,13 @@ pipeline {
                 echo 'Todos los tests pasaron, se publicó la imagen en DockerHub.'
             }
         }
-
+        */
         always {
             script {
                 docker.image(DOCKER_IMAGE_NAME_VOTE).stop()
             }
         }
     }
-*/
-
 }
 
 
