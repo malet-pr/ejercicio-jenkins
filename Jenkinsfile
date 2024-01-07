@@ -53,6 +53,13 @@ pipeline {
                 }
             }
         } */
+        stage('Subir imagen vote-app'){
+            step {
+                docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                    docker.image(DOCKER_IMAGE_NAME_VOTE).push()
+                }
+            }
+        }
 
         stage('Construir imagen de result-app') {
             steps {
@@ -77,6 +84,13 @@ pipeline {
                 }
             }
         } */
+        stage('Subir imagen result-app'){
+            step {
+                docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                    docker.image(DOCKER_IMAGE_NAME_RESULT).push()
+                }
+            }
+        }
 
         stage('Construir imagen de worker-app') {
             steps {
@@ -101,6 +115,14 @@ pipeline {
                 }
             }
         } */
+        stage('Subir imagen worker-app'){
+            step {
+                docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                    docker.image(DOCKER_IMAGE_NAME_WORKER).push()
+                }
+            }
+        }
+
         stage('Deploy Redis') {
             steps {
                 script {
