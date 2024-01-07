@@ -52,14 +52,14 @@ pipeline {
                 }
             }
         } */
-        stage('Borra el contenedor de vote-app'){
+/*         stage('Borra el contenedor de vote-app'){
             steps{
                 script{
                     sh "docker stop $DOCKER_CONTAINER_NAME_VOTE"
                     sh "docker rm $DOCKER_CONTAINER_NAME_VOTE"
                 }
             }
-        }
+        } */
         stage('Construir imagen de result-app') {
             steps {
                 script {
@@ -83,14 +83,14 @@ pipeline {
                 }
             }
         } */
-        stage('Borra el contenedor de result-app'){
+/*         stage('Borra el contenedor de result-app'){
             steps{
                 script{
                     sh "docker stop $DOCKER_CONTAINER_NAME_RESULT"
                     sh "docker rm $DOCKER_CONTAINER_NAME_RESULT"
                 }
             }
-        }
+        } */
          stage('Construir imagen de worker-app') {
             steps {
                 script {
@@ -114,20 +114,20 @@ pipeline {
                 }
             }
         } */
-        stage('Borra el contenedor de worker-app'){
+/*         stage('Borra el contenedor de worker-app'){
             steps{
                 script{
                     sh "docker stop $DOCKER_CONTAINER_NAME_WORKER"
                     sh "docker rm $DOCKER_CONTAINER_NAME_WORKER"
                 }
             }
-        }       
+        }  */      
     }
 
 
-/*     post {
+    post {
         // ESTA PARTE VA SI PASAN LOS TESTS DE TODAS LAS APPS
-        success {
+/*         success {
             script {
                 docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
                     docker.image(DOCKER_IMAGE_NAME_VOTE).push()
@@ -136,19 +136,19 @@ pipeline {
                 }
                 echo 'Todos los tests pasaron, se publicó la imagen en DockerHub.'
             }
-        }
+        } */
         
         always {
             script {
                 sh 'docker stop $DOCKER_CONTAINER_NAME_VOTE'
                 sh 'docker rm $DOCKER_CONTAINER_NAME_VOTE'
-                sh "docker stop $DOCKER_CONTAINER_NAME_RESULT"
-                sh "docker rm $DOCKER_CONTAINER_NAME_RESULT"
-                sh "docker stop $DOCKER_CONTAINER_NAME_WORKER"
-                sh "docker rm $DOCKER_CONTAINER_NAME_WORKER"
+                sh 'docker stop $DOCKER_CONTAINER_NAME_RESULT'
+                sh 'docker rm $DOCKER_CONTAINER_NAME_RESULT'
+                sh 'docker stop $DOCKER_CONTAINER_NAME_WORKER'
+                sh 'docker rm $DOCKER_CONTAINER_NAME_WORKER'
             }
         }
-    }*/
+    }
 }
 
 
