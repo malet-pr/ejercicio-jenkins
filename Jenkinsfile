@@ -1,17 +1,37 @@
 pipeline {
-    agent any
 
     environment {
         GITHUB_CREDENTIALS = credentials('github-credentials')
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
         DOCKERHUB_USERNAME = "${DOCKERHUB_CREDENTIALS_USR}"
         DOCKERHUB_PASSWORD = "${DOCKERHUB_CREDENTIALS_PSW}"
-        DOCKER_IMAGE_NAME_VOTE = "${DOCKERHUB_USERNAME}/vote:latest"
+        DOCKER_C = "${DOCKERHUB_USERNAME}/vote:latest"
         DOCKER_CONTAINER_NAME_VOTE = 'vote'
         DOCKER_IMAGE_NAME_RESULT = "${DOCKERHUB_USERNAME}/result:latest"
         DOCKER_CONTAINER_NAME_RESULT = 'result'
         DOCKER_IMAGE_NAME_WORKER = "${DOCKERHUB_USERNAME}/worker:latest"
         DOCKER_CONTAINER_NAME_WORKER = 'worker'        
+    }
+
+    agent {
+        kubernetes {
+            defaultContainer 'jnlp'
+            yaml """
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              namespace: voting-app
+            spec:
+              serviceAccountName: jenkins-default
+              containers:
+              - name: $DOCKER_CONTAINER_NAME_VOTE
+                image: $DOCKER_CONTAINER_NAME_VOTE
+              - name: $DOCKER_CONTAINER_NAME_RESULT
+                image: $DOCKER_CONTAINER_NAME_RESULT
+              - name: $DOCKER_CONTAINER_NAME_WORKER
+                image: $DOCKER_CONTAINER_NAME_WORKER
+            """
+        }
     }
 
     stages {
