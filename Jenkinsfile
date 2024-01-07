@@ -54,7 +54,7 @@ pipeline {
             }
         } */
         stage('Subir imagen vote-app'){
-            step {
+            steps {
                 docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
                     docker.image(DOCKER_IMAGE_NAME_VOTE).push()
                 }
@@ -85,7 +85,7 @@ pipeline {
             }
         } */
         stage('Subir imagen result-app'){
-            step {
+            steps {
                 docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
                     docker.image(DOCKER_IMAGE_NAME_RESULT).push()
                 }
@@ -116,7 +116,7 @@ pipeline {
             }
         } */
         stage('Subir imagen worker-app'){
-            step {
+            steps {
                 docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
                     docker.image(DOCKER_IMAGE_NAME_WORKER).push()
                 }
