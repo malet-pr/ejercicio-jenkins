@@ -18,11 +18,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: jenkins-role-binding
-  namespace: jenkins
+  namespace: voting-app
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: jenkins
+  namespace: voting-app
 roleRef:
   kind: Role
   name: jenkins-role
