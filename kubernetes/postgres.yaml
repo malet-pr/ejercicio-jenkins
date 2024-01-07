@@ -58,7 +58,11 @@ spec:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  storageClassName: standard
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: "/home/nuria/Cursos/votingApp"
+    type: DirectoryOrCreate
 
 ---
 apiVersion: v1

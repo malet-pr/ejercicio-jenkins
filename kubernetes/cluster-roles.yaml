@@ -1,29 +1,22 @@
-apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: jenkins-cluster-role
+  name: jenkins-pod-list
 rules:
 - apiGroups: [""]
-  resources: ["pods", "services", "configmaps", "persistentvolumeclaims", "deployments"]
-  verbs: ["*"]
-- apiGroups: ["apps"]
-  resources: ["deployments"]
-  verbs: ["*"]
-- apiGroups: [""]
-  resources: ["persistentvolumes"]
-  verbs: ["get", "list"]
+  resources: ["pods"]
+  verbs: ["list"]
 
 ---
+kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
 metadata:
-  name: jenkins-role-binding
-  namespace: voting-app
+  name: jenkins-pod-list-binding
 subjects:
 - kind: ServiceAccount
-  name: default
-  namespace: voting-app
+  name: jenkins
+  namespace: jenkins
 roleRef:
-  kind: Role
-  name: jenkins-role
+  kind: ClusterRole
+  name: jenkins-pod-list
   apiGroup: rbac.authorization.k8s.io
