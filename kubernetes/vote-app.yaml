@@ -28,7 +28,12 @@ spec:
       - name: vote
         image: maletq/vote:latest
         ports:
-        - containerPort: 5000
+        - containerPort: 80
+      env:
+        - name: REDIS_HOST
+          value: "redis-service" 
+        - name: REDIS_PORT
+          value: "6379"
       volumes:
       - name: vote-storage
         persistentVolumeClaim:
