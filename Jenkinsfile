@@ -132,7 +132,7 @@ pipeline {
         stage('Deploy Worker App') {
             steps {
                 script {
-                    sh 'kubectl apply -f ./kubernetes/worker-app.yaml -n jenkins
+                    sh 'kubectl apply -f ./kubernetes/worker-app.yaml -n jenkins'
                 }
             }
         }
