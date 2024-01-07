@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        kubernetes {
-            label 'app=jenkins'
-        }
-    }
+    agent any
 
     environment {
         GITHUB_CREDENTIALS = credentials('github-credentials')
@@ -52,11 +48,21 @@ pipeline {
                 }
             }
         } */
+        stage('Post-build') {
+            steps {
+                script {
+                    container('app=jenkins') {
+                        sh 'docker stop $DOCKER_IMAGE_NAME_VOTE'
+                        sh 'docker rm $DOCKER_IMAGE_NAME_VOTE'
+                    }
+                }
+            }
+        }
     }
 
 
-    post {
-        /*  ESTA PARTE VA SI PASAN LOS TESTS DE TODAS LAS APPS
+/*     post {
+         ESTA PARTE VA SI PASAN LOS TESTS DE TODAS LAS APPS
         success {
             script {
                 docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
@@ -65,7 +71,7 @@ pipeline {
                 echo 'Todos los tests pasaron, se publicó la imagen en DockerHub.'
             }
         }
-        */
+        
         always {
             script {
                 container('docker') {
@@ -74,7 +80,7 @@ pipeline {
                 }
             }
         }
-    }
+    }*/
 }
 
 
