@@ -48,12 +48,13 @@ pipeline {
                 }
             }
         } */
-        stage('Post-build') {
-            steps {
-                script {
-                    container('app=jenkins') {
-                        sh 'docker stop $DOCKER_IMAGE_NAME_VOTE'
-                        sh 'docker rm $DOCKER_IMAGE_NAME_VOTE'
+        stage('Borra todos los contenedores'){
+            steps{
+                script{
+                    def doc_containers = sh(returnStdout: true, script: 'docker container ps -aq').replaceAll("\n", " ") 
+                    if (doc_containers) {
+                        sh "docker stop ${doc_containers}"
+                        sh "docker rm ${doc_containers}"
                     }
                 }
             }
