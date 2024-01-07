@@ -52,14 +52,7 @@ pipeline {
                 }
             }
         } */
-/*         stage('Borra el contenedor de vote-app'){
-            steps{
-                script{
-                    sh "docker stop $DOCKER_CONTAINER_NAME_VOTE"
-                    sh "docker rm $DOCKER_CONTAINER_NAME_VOTE"
-                }
-            }
-        } */
+
         stage('Construir imagen de result-app') {
             steps {
                 script {
@@ -83,15 +76,8 @@ pipeline {
                 }
             }
         } */
-/*         stage('Borra el contenedor de result-app'){
-            steps{
-                script{
-                    sh "docker stop $DOCKER_CONTAINER_NAME_RESULT"
-                    sh "docker rm $DOCKER_CONTAINER_NAME_RESULT"
-                }
-            }
-        } */
-         stage('Construir imagen de worker-app') {
+
+        stage('Construir imagen de worker-app') {
             steps {
                 script {
                     docker.build(DOCKER_IMAGE_NAME_WORKER, "./worker")
@@ -114,16 +100,49 @@ pipeline {
                 }
             }
         } */
-/*         stage('Borra el contenedor de worker-app'){
-            steps{
-                script{
-                    sh "docker stop $DOCKER_CONTAINER_NAME_WORKER"
-                    sh "docker rm $DOCKER_CONTAINER_NAME_WORKER"
+        stage('Crear Namespace') {
+            steps {
+                script {
+                    sh 'kubectl create namespace voting-app'
                 }
             }
-        }  */      
+        }
+        stage('Deploy Redis') {
+            steps {
+                script {
+                    sh 'kubectl apply -f ./kubernetes/redis.yaml -n voting-app'
+                }
+            }
+        }
+        stage('Deploy PostgreSQL') {
+            steps {
+                script {
+                    sh 'kubectl apply -f ./kubernetes/postgres.yaml -n voting-app'
+                }
+            }
+        }
+        stage('Deploy Vote App') {
+            steps {
+                script {
+                    sh 'kubectl apply -f ./kubernetes/vote-app.yaml -n voting-app'
+                }
+            }
+        }
+        stage('Deploy Result App') {
+            steps {
+                script {
+                    sh 'kubectl apply -f ./kubernetes/result-app.yaml -n voting-app'
+                }
+            }
+        }
+        stage('Deploy Worker App') {
+            steps {
+                script {
+                    sh 'kubectl apply -f ./kubernetes/worker-app.yaml -n voting-app'
+                }
+            }
+        }
     }
-
 
     post {
         // ESTA PARTE VA SI PASAN LOS TESTS DE TODAS LAS APPS
