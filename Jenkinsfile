@@ -55,8 +55,10 @@ pipeline {
         } */
         stage('Subir imagen vote-app'){
             steps {
-                docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
-                    docker.image(DOCKER_IMAGE_NAME_VOTE).push()
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                        docker.image(DOCKER_IMAGE_NAME_VOTE).push()
+                    }
                 }
             }
         }
@@ -86,8 +88,10 @@ pipeline {
         } */
         stage('Subir imagen result-app'){
             steps {
-                docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
-                    docker.image(DOCKER_IMAGE_NAME_RESULT).push()
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                        docker.image(DOCKER_IMAGE_NAME_RESULT).push()
+                    }
                 }
             }
         }
@@ -117,8 +121,10 @@ pipeline {
         } */
         stage('Subir imagen worker-app'){
             steps {
-                docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
-                    docker.image(DOCKER_IMAGE_NAME_WORKER).push()
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                        docker.image(DOCKER_IMAGE_NAME_WORKER).push()
+                    }
                 }
             }
         }
