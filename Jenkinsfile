@@ -48,14 +48,11 @@ pipeline {
                 }
             }
         } */
-        stage('Borra todos los contenedores'){
+        stage('Borra el contenedor'){
             steps{
                 script{
-                    def doc_containers = sh(returnStdout: true, script: 'docker container ps -aq').replaceAll("\n", " ") 
-                    if (doc_containers) {
-                        sh "docker stop ${doc_containers}"
-                        sh "docker rm ${doc_containers}"
-                    }
+                    sh "docker stop $DOCKER_CONTAINER_NAME_VOTE"
+                    sh "docker rm $DOCKER_CONTAINER_NAME_VOTE"
                 }
             }
         }
@@ -75,10 +72,8 @@ pipeline {
         
         always {
             script {
-                container('docker') {
-                    sh 'docker stop $DOCKER_IMAGE_NAME_VOTE'
-                    sh 'docker rm $DOCKER_IMAGE_NAME_VOTE'
-                }
+                sh 'docker stop $DOCKER_CONTAINER_NAME_VOTE'
+                sh 'docker rm $DOCKER_CONTAINER_NAME_VOTE'
             }
         }
     }*/
