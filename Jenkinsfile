@@ -43,7 +43,7 @@ pipeline {
                 }
             }
         }
-/*         stage('Run Tests') {
+/*         stage('vote tests') {
             steps {
                 script {
                     docker.image(DOCKER_IMAGE_NAME_VOTE).inside("--workdir /app") {
@@ -74,7 +74,7 @@ pipeline {
                 }
             }
         }
-/*         stage('Run Tests') {
+/*         stage('result tests') {
             steps {
                 script {
                     docker.image(DOCKER_IMAGE_NAME_RESULT).inside("--workdir /app") {
@@ -91,15 +91,48 @@ pipeline {
                 }
             }
         }
+         stage('Construir imagen de worker-app') {
+            steps {
+                script {
+                    docker.build(DOCKER_IMAGE_NAME_WORKER, "./worker")
+                }
+            }
+        }
+        stage('Arrancar el contenedor de worker-app') {
+            steps {
+                script {
+                    docker.image(DOCKER_IMAGE_NAME_WORKER).run("--name $DOCKER_CONTAINER_NAME_WORKER -d")
+                }
+            }
+        }
+/*         stage('worker tests') {
+            steps {
+                script {
+                    docker.image(DOCKER_IMAGE_NAME_WORKER).inside("--workdir /app") {
+                        //sh 'python -m unittest discover'
+                    }
+                }
+            }
+        } */
+        stage('Borra el contenedor de worker-app'){
+            steps{
+                script{
+                    sh "docker stop $DOCKER_CONTAINER_NAME_WORKER"
+                    sh "docker rm $DOCKER_CONTAINER_NAME_WORKER"
+                }
+            }
+        }       
     }
 
 
 /*     post {
-         ESTA PARTE VA SI PASAN LOS TESTS DE TODAS LAS APPS
+        // ESTA PARTE VA SI PASAN LOS TESTS DE TODAS LAS APPS
         success {
             script {
                 docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
                     docker.image(DOCKER_IMAGE_NAME_VOTE).push()
+                    docker.image(DOCKER_IMAGE_NAME_RESULT).push()
+                    docker.image(DOCKER_IMAGE_NAME_WORKER).push()
                 }
                 echo 'Todos los tests pasaron, se publicó la imagen en DockerHub.'
             }
@@ -109,6 +142,10 @@ pipeline {
             script {
                 sh 'docker stop $DOCKER_CONTAINER_NAME_VOTE'
                 sh 'docker rm $DOCKER_CONTAINER_NAME_VOTE'
+                sh "docker stop $DOCKER_CONTAINER_NAME_RESULT"
+                sh "docker rm $DOCKER_CONTAINER_NAME_RESULT"
+                sh "docker stop $DOCKER_CONTAINER_NAME_WORKER"
+                sh "docker rm $DOCKER_CONTAINER_NAME_WORKER"
             }
         }
     }*/
