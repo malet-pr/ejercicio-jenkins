@@ -28,7 +28,7 @@ spec:
       - name: result
         image: maletq/result:latest
         ports:
-        - containerPort: 5001
+        - containerPort: 80
       volumes:
       - name: result-storage
         persistentVolumeClaim:
