@@ -64,7 +64,7 @@ pipeline {
         */
         always {
             script {
-                container(DOCKER_IMAGE_NAME_VOTE) {
+                container('docker') {
                     sh 'docker stop $DOCKER_IMAGE_NAME_VOTE'
                     sh 'docker rm $DOCKER_IMAGE_NAME_VOTE'
                 }
