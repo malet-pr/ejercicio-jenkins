@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-deployment
+  name: db-deployment
   labels:
-    app: postgres
+    app: db
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: db
   template:
     metadata:
       labels:
-        app: postgres
+        app: db
     spec:
       containers:
       - name: postgres-container
@@ -23,8 +23,6 @@ spec:
         - name: POSTGRES_USER
           value: "postgres"
         - name: POSTGRES_PASSWORD
-          value: "postgres"
-        - name: POSTGRES_DB
           value: "postgres"
         volumeMounts:
         - name: postgres-data
@@ -38,11 +36,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-service
+  name: db
 spec:
-  type: NodePort
   selector:
-    app: postgres
+    app: db
   ports:
   - protocol: TCP
     port: 5432
