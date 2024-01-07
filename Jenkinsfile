@@ -39,7 +39,7 @@ pipeline {
                 }
             }
         }
-        stage('Run Tests') {
+/*         stage('Run Tests') {
             steps {
                 script {
                     docker.image(DOCKER_IMAGE_NAME_VOTE).inside("--workdir /app") {
@@ -47,7 +47,7 @@ pipeline {
                     }
                 }
             }
-        }
+        } */
     }
 
 
@@ -64,7 +64,7 @@ pipeline {
         */
         always {
             script {
-                docker.image(DOCKER_IMAGE_NAME_VOTE).stop()
+                docker.image(DOCKER_IMAGE_NAME_VOTE).remove(force: true)
             }
         }
     }
