@@ -7,12 +7,12 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
         DOCKERHUB_USERNAME = "${DOCKERHUB_CREDENTIALS_USR}"
         DOCKERHUB_PASSWORD = "${DOCKERHUB_CREDENTIALS_PSW}"
-        DOCKER_C = "${DOCKERHUB_USERNAME}/vote:latest"
+        DOCKER_IMAGE_NAME_VOTE = "${DOCKERHUB_USERNAME}/vote:latest"
         DOCKER_CONTAINER_NAME_VOTE = 'vote'
         DOCKER_IMAGE_NAME_RESULT = "${DOCKERHUB_USERNAME}/result:latest"
         DOCKER_CONTAINER_NAME_RESULT = 'result'
         DOCKER_IMAGE_NAME_WORKER = "${DOCKERHUB_USERNAME}/worker:latest"
-        DOCKER_CONTAINER_NAME_WORKER = 'worker'        
+        DOCKER_CONTAINER_NAME_WORKER = 'worker'     
     }
 
     stages {
