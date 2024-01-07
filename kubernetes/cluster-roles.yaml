@@ -1,11 +1,17 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: jenkins-pv-creator
+  name: jenkins-cluster-role
 rules:
 - apiGroups: [""]
+  resources: ["pods", "services", "configmaps", "persistentvolumeclaims", "deployments"]
+  verbs: ["*"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["*"]
+- apiGroups: [""]
   resources: ["persistentvolumes"]
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  verbs: ["get", "list"]
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
