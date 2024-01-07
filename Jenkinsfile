@@ -171,17 +171,6 @@ pipeline {
             }
         }
     }
-
-    post {
-        always {
-            script {
-
-
-                sh 'docker stop $DOCKER_CONTAINER_NAME_WORKER'
-                sh 'docker rm $DOCKER_CONTAINER_NAME_WORKER'
-            }
-        }
-    }
 }
 
 
