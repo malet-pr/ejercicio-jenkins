@@ -104,35 +104,35 @@ pipeline {
         stage('Deploy Redis') {
             steps {
                 script {
-                    sh 'kubectl apply -f ./kubernetes/redis.yaml -n voting-app'
+                    sh 'kubectl apply -f ./kubernetes/redis.yaml -n jenkins'
                 }
             }
         }
         stage('Deploy PostgreSQL') {
             steps {
                 script {
-                    sh 'kubectl apply -f ./kubernetes/postgres.yaml -n voting-app'
+                    sh 'kubectl apply -f ./kubernetes/postgres.yaml -n jenkins'
                 }
             }
         }
         stage('Deploy Vote App') {
             steps {
                 script {
-                    sh 'kubectl apply -f ./kubernetes/vote-app.yaml -n voting-app'
+                    sh 'kubectl apply -f ./kubernetes/vote-app.yaml -n jenkins'
                 }
             }
         }
         stage('Deploy Result App') {
             steps {
                 script {
-                    sh 'kubectl apply -f ./kubernetes/result-app.yaml -n voting-app'
+                    sh 'kubectl apply -f ./kubernetes/result-app.yaml -n jenkins'
                 }
             }
         }
         stage('Deploy Worker App') {
             steps {
                 script {
-                    sh 'kubectl apply -f ./kubernetes/worker-app.yaml -n voting-app'
+                    sh 'kubectl apply -f ./kubernetes/worker-app.yaml -n jenkins
                 }
             }
         }
