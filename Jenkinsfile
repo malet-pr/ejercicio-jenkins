@@ -53,6 +53,17 @@ pipeline {
                 }
             }
         } */
+        stage('Subir imagen vote-app'){
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                        docker.image(DOCKER_IMAGE_NAME_VOTE).push()
+                    }
+                    sh 'docker stop $DOCKER_CONTAINER_NAME_VOTE'
+                    sh 'docker rm $DOCKER_CONTAINER_NAME_VOTE'  
+                }
+            }
+        }
 
         stage('Construir imagen de result-app') {
             steps {
@@ -77,6 +88,17 @@ pipeline {
                 }
             }
         } */
+        stage('Subir imagen result-app'){
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                        docker.image(DOCKER_IMAGE_NAME_RESULT).push()                       
+                    }
+                    sh 'docker stop $DOCKER_CONTAINER_NAME_RESULT'
+                    sh 'docker rm $DOCKER_CONTAINER_NAME_RESULT' 
+                }
+            }
+        }
 
         stage('Construir imagen de worker-app') {
             steps {
@@ -88,7 +110,7 @@ pipeline {
         stage('Arrancar el contenedor de worker-app') {
             steps {
                 script {
-                    docker.image(DOCKER_IMAGE_NAME_WORKER).run("--name $DOCKER_CONTAINER_NAME_WORKER -d")
+                    docker.image(DOCKER_IMAGE_NAME_WORKER).run("--name $DOCKER_CONTAINER_NAME_WORKER -d")              
                 }
             }
         }
@@ -101,6 +123,18 @@ pipeline {
                 }
             }
         } */
+        stage('Subir imagen worker-app'){
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                        docker.image(DOCKER_IMAGE_NAME_WORKER).push()
+                    }
+                    sh 'docker stop $DOCKER_CONTAINER_NAME_WORKER'
+                    sh 'docker rm $DOCKER_CONTAINER_NAME_WORKER'                 
+                }
+            }
+        }
+
         stage('Deploy Redis') {
             steps {
                 script {
@@ -134,31 +168,6 @@ pipeline {
                 script {
                     sh 'kubectl apply -f ./kubernetes/worker-app.yaml -n voting-app'
                 }
-            }
-        }
-    }
-
-    post {
-        // ESTA PARTE VA SI PASAN LOS TESTS DE TODAS LAS APPS
-/*         success {
-            script {
-                docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
-                    docker.image(DOCKER_IMAGE_NAME_VOTE).push()
-                    docker.image(DOCKER_IMAGE_NAME_RESULT).push()
-                    docker.image(DOCKER_IMAGE_NAME_WORKER).push()
-                }
-                echo 'Todos los tests pasaron, se publicó la imagen en DockerHub.'
-            }
-        } */
-        
-        always {
-            script {
-                sh 'docker stop $DOCKER_CONTAINER_NAME_VOTE'
-                sh 'docker rm $DOCKER_CONTAINER_NAME_VOTE'
-                sh 'docker stop $DOCKER_CONTAINER_NAME_RESULT'
-                sh 'docker rm $DOCKER_CONTAINER_NAME_RESULT'
-                sh 'docker stop $DOCKER_CONTAINER_NAME_WORKER'
-                sh 'docker rm $DOCKER_CONTAINER_NAME_WORKER'
             }
         }
     }
