@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+            label 'app=jenkins'
+        }
+    }
 
     environment {
         GITHUB_CREDENTIALS = credentials('github-credentials')
