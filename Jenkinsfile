@@ -101,13 +101,7 @@ pipeline {
                 }
             }
         } */
-        stage('Deploy Redis') {
-            steps {
-                script {
-                    sh 'kubectl apply -f ./kubernetes/redis.yaml -n jenkins'
-                }
-            }
-        }
+
         stage('Deploy PostgreSQL') {
             steps {
                 script {
