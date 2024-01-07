@@ -8,6 +8,10 @@ pipeline {
         DOCKERHUB_PASSWORD = "${DOCKERHUB_CREDENTIALS_PSW}"
         DOCKER_IMAGE_NAME_VOTE = "${DOCKERHUB_USERNAME}/vote:latest"
         DOCKER_CONTAINER_NAME_VOTE = 'vote'
+        DOCKER_IMAGE_NAME_RESULT = "${DOCKERHUB_USERNAME}/result:latest"
+        DOCKER_CONTAINER_NAME_RESULT = 'result'
+        DOCKER_IMAGE_NAME_WORKER = "${DOCKERHUB_USERNAME}/worker:latest"
+        DOCKER_CONTAINER_NAME_WORKER = 'worker'        
     }
 
     stages {
@@ -53,6 +57,37 @@ pipeline {
                 script{
                     sh "docker stop $DOCKER_CONTAINER_NAME_VOTE"
                     sh "docker rm $DOCKER_CONTAINER_NAME_VOTE"
+                }
+            }
+        }
+        stage('Construir imagen de result-app') {
+            steps {
+                script {
+                    docker.build(DOCKER_IMAGE_NAME_RESULT, "./result")
+                }
+            }
+        }
+        stage('Arrancar el contenedor de result-app') {
+            steps {
+                script {
+                    docker.image(DOCKER_IMAGE_NAME_RESULT).run("-p 5001:80 --name $DOCKER_CONTAINER_NAME_RESULT -d")
+                }
+            }
+        }
+/*         stage('Run Tests') {
+            steps {
+                script {
+                    docker.image(DOCKER_IMAGE_NAME_RESULT).inside("--workdir /app") {
+                        //sh 'python -m unittest discover'
+                    }
+                }
+            }
+        } */
+        stage('Borra el contenedor'){
+            steps{
+                script{
+                    sh "docker stop $DOCKER_CONTAINER_NAME_RESULT"
+                    sh "docker rm $DOCKER_CONTAINER_NAME_RESULT"
                 }
             }
         }
