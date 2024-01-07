@@ -100,13 +100,6 @@ pipeline {
                 }
             }
         } */
-        stage('Crear Namespace') {
-            steps {
-                script {
-                    sh 'kubectl create namespace voting-app'
-                }
-            }
-        }
         stage('Deploy Redis') {
             steps {
                 script {
