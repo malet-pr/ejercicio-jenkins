@@ -52,7 +52,7 @@ pipeline {
                 }
             }
         } */
-        stage('Borra el contenedor'){
+        stage('Borra el contenedor de vote-app'){
             steps{
                 script{
                     sh "docker stop $DOCKER_CONTAINER_NAME_VOTE"
@@ -83,7 +83,7 @@ pipeline {
                 }
             }
         } */
-        stage('Borra el contenedor'){
+        stage('Borra el contenedor de result-app'){
             steps{
                 script{
                     sh "docker stop $DOCKER_CONTAINER_NAME_RESULT"
