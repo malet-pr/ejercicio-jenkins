@@ -64,9 +64,10 @@ pipeline {
         */
         always {
             script {
-                def voteImage = docker.image(DOCKER_IMAGE_NAME_VOTE)
-                voteImage.stop()
-                voteImage.removeContainer()
+                container(DOCKER_IMAGE_NAME_VOTE) {
+                    sh 'docker stop $DOCKER_IMAGE_NAME_VOTE'
+                    sh 'docker rm $DOCKER_IMAGE_NAME_VOTE'
+                }
             }
         }
     }
