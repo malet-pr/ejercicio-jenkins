@@ -1,3 +1,9 @@
+def formatDate(long timestamp) {
+    def sdf = new java.text.SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", new java.util.Locale("es", "ES"))
+    sdf.timeZone = TimeZone.getTimeZone("GMT-3")
+    return sdf.format(new Date(timestamp))
+}
+
 pipeline {
 
     agent any
@@ -138,11 +144,6 @@ pipeline {
     post {
         success {
             script {
-                def formatDate(long timestamp) {
-                    def sdf = new java.text.SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", new java.util.Locale("es", "ES"))
-                    sdf.timeZone = TimeZone.getTimeZone("GMT-3")
-                    return sdf.format(new Date(timestamp))
-                }
                 def successMessage = "Build #" + BUILD_NUMBER + " del pipeline " + env.JOB_NAME + " termino con exito el " + formatDate(currentBuild.getTimeInMillis())
                 sh """
                     curl -X POST -H 'Content-type: application/json' --data '{"content": "${successMessage}"}' ${DISCORD_WEBHOOK_URL}
@@ -151,11 +152,6 @@ pipeline {
         }
         failure {
             script {
-                def formatDate(long timestamp) {
-                    def sdf = new java.text.SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", new java.util.Locale("es", "ES"))
-                    sdf.timeZone = TimeZone.getTimeZone("GMT-3")
-                    return sdf.format(new Date(timestamp))
-                }
                 def failureMessage = "Build #" + BUILD_NUMBER + " del pipeline " + env.JOB_NAME + " fallo el " + formatDate(currentBuild.getTimeInMillis())
                 sh """
                     curl -X POST -H 'Content-type: application/json' --data '{"content": "${failureMessage}"}' ${DISCORD_WEBHOOK_URL}
