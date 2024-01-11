@@ -16,7 +16,7 @@ pipeline {
     }
 
     stages {
-        stage('Checkout repositorio') {
+        stage('Obtener repositorio') {
             steps {
                 script {
                     checkout([$class: 'GitSCM', 
@@ -30,41 +30,23 @@ pipeline {
                 }
             }
         }
-        stage('Construir imagen de vote-app') {
+        stage('tests para vote-app') {
+            steps {
+                script {
+                    sh 'echo No hay tests de vote-app'
+                }
+            }
+        } 
+        stage('Construir imagen de vote-app y subirla a Docker Hub') {
             steps {
                 script {
                     docker.build(DOCKER_IMAGE_NAME_VOTE, "./vote")
-                }
-            }
-        }
-        stage('Arrancar el contenedor de vote-app') {
-            steps {
-                script {
-                    docker.image(DOCKER_IMAGE_NAME_VOTE).run("-p 5000:80 --name $DOCKER_CONTAINER_NAME_VOTE -d")
-                }
-            }
-        }
-/*         stage('vote tests') {
-            steps {
-                script {
-                    docker.image(DOCKER_IMAGE_NAME_VOTE).inside("--workdir /app") {
-                        sh 'python -m unittest discover'
-                    }
-                }
-            }
-        } */
-        stage('Subir imagen vote-app'){
-            steps {
-                script {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
                         docker.image(DOCKER_IMAGE_NAME_VOTE).push()
-                    }
-                    sh 'docker stop $DOCKER_CONTAINER_NAME_VOTE'
-                    sh 'docker rm $DOCKER_CONTAINER_NAME_VOTE'  
+                    } 
                 }
             }
         }
-
         stage('Construir imagen de result-app') {
             steps {
                 script {
@@ -72,18 +54,19 @@ pipeline {
                 }
             }
         }
-        stage('Arrancar el contenedor de result-app') {
+/*         stage('Arrancar el contenedor de result-app') {
             steps {
                 script {
                     docker.image(DOCKER_IMAGE_NAME_RESULT).run("-p 5001:80 --name $DOCKER_CONTAINER_NAME_RESULT -d")
                 }
             }
-        }
-/*         stage('result tests') {
+        } */
+/*         stage('tests para result-app') {
             steps {
                 script {
                     docker.image(DOCKER_IMAGE_NAME_RESULT).inside("--workdir /app") {
                         //sh 'python -m unittest discover'
+                        // comando para tests
                     }
                 }
             }
@@ -94,8 +77,8 @@ pipeline {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
                         docker.image(DOCKER_IMAGE_NAME_RESULT).push()                       
                     }
-                    sh 'docker stop $DOCKER_CONTAINER_NAME_RESULT'
-                    sh 'docker rm $DOCKER_CONTAINER_NAME_RESULT' 
+                    // sh 'docker stop $DOCKER_CONTAINER_NAME_RESULT'
+                    // sh 'docker rm $DOCKER_CONTAINER_NAME_RESULT' 
                 }
             }
         }
@@ -107,30 +90,19 @@ pipeline {
                 }
             }
         }
-        stage('Arrancar el contenedor de worker-app') {
+        stage('tests para worker-app') {
             steps {
                 script {
-                    docker.image(DOCKER_IMAGE_NAME_WORKER).run("--name $DOCKER_CONTAINER_NAME_WORKER -d")              
+                    sh 'echo No hay tests de worker-app'
                 }
             }
-        }
-/*         stage('worker tests') {
-            steps {
-                script {
-                    docker.image(DOCKER_IMAGE_NAME_WORKER).inside("--workdir /app") {
-                        //sh 'python -m unittest discover'
-                    }
-                }
-            }
-        } */
+        } 
         stage('Subir imagen worker-app'){
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
                         docker.image(DOCKER_IMAGE_NAME_WORKER).push()
-                    }
-                    sh 'docker stop $DOCKER_CONTAINER_NAME_WORKER'
-                    sh 'docker rm $DOCKER_CONTAINER_NAME_WORKER'                 
+                    }                
                 }
             }
         }
