@@ -14,7 +14,8 @@ pipeline {
         DOCKER_IMAGE_NAME_RESULT_TEST = "${DOCKERHUB_USERNAME}/result-test"
         DOCKER_CONTAINER_NAME_RESULT_TEST = 'result-test'
         DOCKER_IMAGE_NAME_WORKER = "${DOCKERHUB_USERNAME}/worker:latest"
-        DOCKER_CONTAINER_NAME_WORKER = 'worker'     
+        DOCKER_CONTAINER_NAME_WORKER = 'worker'   
+        DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1195123870039019570/CF4atSic8tBkRhrvQyN-z66kG9MF2EPcPQzGlX8_KkOVPeSUy-qgys_Twh-da5hRDEE4"
     }
   
     stages {
@@ -136,20 +137,22 @@ pipeline {
     }
     post {
         success {
-            emailext(
-                to: 'maletq.pr@gmail.com',
-                subject: "Resultado Jenkins - ${currentBuild.fullDisplayName}",
-                body: "El pipeline de Jenkins terminó sin errores."
-            )
+            script {
+                def successMessage = 'El build #${BUILD_NUMBER} de jenkins sobre el pipeline ${env.JOB_NAME} se completó con éxito en ${currentBuild.getTimeInMillis()}'
+                
+                sh """
+                    curl -X POST -H 'Content-type: application/json' --data '{"content": "${successMessage}"}' ${DISCORD_WEBHOOK_URL}
+                """
+            }
         }
         failure {
-            emailext(
-                to: 'maletq.pr@gmail.com',
-                subject: "Resultado Jenkins - ${currentBuild.fullDisplayName}",
-                body: "El pipeline de Jenkins terminó con errores."
-            )
+            script {
+                def failureMessage = 'El build #${BUILD_NUMBER} de jenkins sobre el pipeline ${env.JOB_NAME} falló en ${currentBuild.getTimeInMillis()}'
+                
+                sh """
+                    curl -X POST -H 'Content-type: application/json' --data '{"content": "${failureMessage}"}' ${DISCORD_WEBHOOK_URL}
+                """
+            }
         }
     }
 }
-
-
