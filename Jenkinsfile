@@ -120,14 +120,16 @@ pipeline {
         stage('Deploy Result App') {
             steps {
                 script {
-                    sh 'kubectl apply -f ./kubernetes/result-app.yaml -n voting-app'
+                    sh "envsubst < ./kubernetes/result-app.yaml | kubectl apply -n voting-app -f -"
+                    //sh 'kubectl apply -f ./kubernetes/result-app.yaml -n voting-app'
                 }
             }
         }
         stage('Deploy Worker App') {
             steps {
                 script {
-                    sh 'kubectl apply -f ./kubernetes/worker-app.yaml -n voting-app'
+                    sh "envsubst < ./kubernetes/worker-app.yaml | kubectl apply -n voting-app -f -"
+                    //sh 'kubectl apply -f ./kubernetes/worker-app.yaml -n voting-app'
                 }
             }
         }

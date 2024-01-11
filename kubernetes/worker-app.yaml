@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
       - name: worker
-        image: maletq/worker:latest
+        image: ${DOCKER_IMAGE_NAME_WORKER}
       volumes:
       - name: worker-storage
         persistentVolumeClaim:
