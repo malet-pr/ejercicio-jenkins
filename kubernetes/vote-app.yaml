@@ -26,10 +26,10 @@ spec:
     spec:
       containers:
       - name: vote
-        image: maletq/vote:latest
+        image: ${DOCKER_IMAGE_NAME_VOTE}
         ports:
         - containerPort: 80
-      env:
+        env:
         - name: REDIS_HOST
           value: "redis-service" 
         - name: REDIS_PORT
@@ -52,3 +52,4 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 5000
+      nodePort: 30301

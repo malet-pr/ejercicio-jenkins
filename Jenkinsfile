@@ -11,130 +11,90 @@ pipeline {
         DOCKER_CONTAINER_NAME_VOTE = 'vote'
         DOCKER_IMAGE_NAME_RESULT = "${DOCKERHUB_USERNAME}/result:latest"
         DOCKER_CONTAINER_NAME_RESULT = 'result'
+        DOCKER_IMAGE_NAME_RESULT_TEST = "${DOCKERHUB_USERNAME}/result-test"
+        DOCKER_CONTAINER_NAME_RESULT_TEST = 'result-test'
         DOCKER_IMAGE_NAME_WORKER = "${DOCKERHUB_USERNAME}/worker:latest"
         DOCKER_CONTAINER_NAME_WORKER = 'worker'     
     }
-
+  
     stages {
-        stage('Checkout repositorio') {
+        stage('Obtener repositorio') {
             steps {
                 script {
-                    checkout([$class: 'GitSCM', 
-                            branches: [
-                                [name: 'desarrollo'],
-                                [name: 'produccion']
-                            ], 
-                            doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
-                            userRemoteConfigs: [[url: 'https://github.com/malet-pr/ejercicio-jenkins.git']],
-                            credentialsId: 'github-credentials'])
+                    checkout([
+                        $class: 'GitSCM', 
+                        branches: [
+                            [name: 'desarrollo'],
+                            [name: 'produccion']
+                        ], 
+                        doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
+                        userRemoteConfigs: [[url: 'https://github.com/malet-pr/ejercicio-jenkins.git']],
+                        credentialsId: 'github-credentials'
+                    ])
                 }
             }
         }
-        stage('Construir imagen de vote-app') {
+        stage('tests para vote-app') {
+            steps {
+                script {
+                    sh 'echo "No hay tests de vote-app"'
+                }
+            }
+        } 
+        stage('Construir imagen de vote-app y subirla a Docker Hub') {
             steps {
                 script {
                     docker.build(DOCKER_IMAGE_NAME_VOTE, "./vote")
-                }
-            }
-        }
-        stage('Arrancar el contenedor de vote-app') {
-            steps {
-                script {
-                    docker.image(DOCKER_IMAGE_NAME_VOTE).run("-p 5000:80 --name $DOCKER_CONTAINER_NAME_VOTE -d")
-                }
-            }
-        }
-/*         stage('vote tests') {
-            steps {
-                script {
-                    docker.image(DOCKER_IMAGE_NAME_VOTE).inside("--workdir /app") {
-                        sh 'python -m unittest discover'
-                    }
-                }
-            }
-        } */
-        stage('Subir imagen vote-app'){
-            steps {
-                script {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
                         docker.image(DOCKER_IMAGE_NAME_VOTE).push()
-                    }
-                    sh 'docker stop $DOCKER_CONTAINER_NAME_VOTE'
-                    sh 'docker rm $DOCKER_CONTAINER_NAME_VOTE'  
+                    } 
                 }
             }
         }
-
-        stage('Construir imagen de result-app') {
+        stage('tests para result-app') {
+            steps {
+                script {
+                    docker.build(DOCKER_IMAGE_NAME_RESULT_TEST, "./result/tests") 
+                    docker.image(DOCKER_IMAGE_NAME_RESULT_TEST).run("--name $DOCKER_CONTAINER_NAME_RESULT_TEST -d")
+                    sh 'docker rm $DOCKER_CONTAINER_NAME_RESULT_TEST --force'
+                    sh 'docker rmi $DOCKER_IMAGE_NAME_RESULT_TEST'
+                }
+            }
+        }        
+        stage('Construir imagen de result-app y subirla a Docker Hub') {
             steps {
                 script {
                     docker.build(DOCKER_IMAGE_NAME_RESULT, "./result")
-                }
-            }
-        }
-        stage('Arrancar el contenedor de result-app') {
-            steps {
-                script {
-                    docker.image(DOCKER_IMAGE_NAME_RESULT).run("-p 5001:80 --name $DOCKER_CONTAINER_NAME_RESULT -d")
-                }
-            }
-        }
-/*         stage('result tests') {
-            steps {
-                script {
-                    docker.image(DOCKER_IMAGE_NAME_RESULT).inside("--workdir /app") {
-                        //sh 'python -m unittest discover'
-                    }
-                }
-            }
-        } */
-        stage('Subir imagen result-app'){
-            steps {
-                script {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
-                        docker.image(DOCKER_IMAGE_NAME_RESULT).push()                       
-                    }
-                    sh 'docker stop $DOCKER_CONTAINER_NAME_RESULT'
-                    sh 'docker rm $DOCKER_CONTAINER_NAME_RESULT' 
+                        docker.image(DOCKER_IMAGE_NAME_RESULT).push()
+                    } 
                 }
             }
         }
-
-        stage('Construir imagen de worker-app') {
+        stage('tests para worker-app') {
+            steps {
+                script {
+                    sh 'echo "No hay tests de worker-app"'
+                }
+            }
+        } 
+        stage('Construir imagen de worker-app y subir a Docker Hub') {
             steps {
                 script {
                     docker.build(DOCKER_IMAGE_NAME_WORKER, "./worker")
-                }
-            }
-        }
-        stage('Arrancar el contenedor de worker-app') {
-            steps {
-                script {
-                    docker.image(DOCKER_IMAGE_NAME_WORKER).run("--name $DOCKER_CONTAINER_NAME_WORKER -d")              
-                }
-            }
-        }
-/*         stage('worker tests') {
-            steps {
-                script {
-                    docker.image(DOCKER_IMAGE_NAME_WORKER).inside("--workdir /app") {
-                        //sh 'python -m unittest discover'
-                    }
-                }
-            }
-        } */
-        stage('Subir imagen worker-app'){
-            steps {
-                script {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
                         docker.image(DOCKER_IMAGE_NAME_WORKER).push()
-                    }
-                    sh 'docker stop $DOCKER_CONTAINER_NAME_WORKER'
-                    sh 'docker rm $DOCKER_CONTAINER_NAME_WORKER'                 
+                    } 
+                }                     
+            }
+        }
+        stage('Instalar envsubst') {
+            steps {
+                script {
+                    sh 'apt-get update && apt-get install -y gettext-base'
                 }
             }
         }
-
         stage('Deploy Redis') {
             steps {
                 script {
@@ -152,21 +112,24 @@ pipeline {
         stage('Deploy Vote App') {
             steps {
                 script {
-                    sh 'kubectl apply -f ./kubernetes/vote-app.yaml -n voting-app'
+                    sh "envsubst < ./kubernetes/vote-app.yaml | kubectl apply -n voting-app -f -"
+                    //sh 'kubectl apply -f ./kubernetes/vote-app.yaml -n voting-app'
                 }
             }
         }
         stage('Deploy Result App') {
             steps {
                 script {
-                    sh 'kubectl apply -f ./kubernetes/result-app.yaml -n voting-app'
+                    sh "envsubst < ./kubernetes/result-app.yaml | kubectl apply -n voting-app -f -"
+                    //sh 'kubectl apply -f ./kubernetes/result-app.yaml -n voting-app'
                 }
             }
         }
         stage('Deploy Worker App') {
             steps {
                 script {
-                    sh 'kubectl apply -f ./kubernetes/worker-app.yaml -n voting-app'
+                    sh "envsubst < ./kubernetes/worker-app.yaml | kubectl apply -n voting-app -f -"
+                    //sh 'kubectl apply -f ./kubernetes/worker-app.yaml -n voting-app'
                 }
             }
         }
