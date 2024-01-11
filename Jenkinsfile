@@ -84,7 +84,8 @@ pipeline {
                     docker.build(DOCKER_IMAGE_NAME_WORKER, "./worker")
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
                         docker.image(DOCKER_IMAGE_NAME_WORKER).push()
-                    }                      
+                    } 
+                }                     
             }
         }
         stage('Deploy Redis') {
