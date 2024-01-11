@@ -1,5 +1,5 @@
 def formatDate(long timestamp) {
-    def sdf = new java.text.SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", new java.util.Locale("es", "ES"))
+    def sdf = new java.text.SimpleDateFormat("dd/MMM/yyyy a las HH:mm:ss (z)", new java.util.Locale("es", "ES"))
     sdf.timeZone = TimeZone.getTimeZone("GMT-3")
     return sdf.format(new Date(timestamp))
 }
