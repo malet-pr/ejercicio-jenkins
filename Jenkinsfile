@@ -11,29 +11,33 @@ pipeline {
         DOCKER_CONTAINER_NAME_VOTE = 'vote'
         DOCKER_IMAGE_NAME_RESULT = "${DOCKERHUB_USERNAME}/result:latest"
         DOCKER_CONTAINER_NAME_RESULT = 'result'
+        DOCKER_IMAGE_NAME_RESULT_TEST = "${DOCKERHUB_USERNAME}/result-test"
+        DOCKER_CONTAINER_NAME_RESULT_TEST = 'result-test'
         DOCKER_IMAGE_NAME_WORKER = "${DOCKERHUB_USERNAME}/worker:latest"
         DOCKER_CONTAINER_NAME_WORKER = 'worker'     
     }
-
+  
     stages {
         stage('Obtener repositorio') {
             steps {
                 script {
-                    checkout([$class: 'GitSCM', 
-                            branches: [
-                                [name: 'desarrollo'],
-                                [name: 'produccion']
-                            ], 
-                            doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
-                            userRemoteConfigs: [[url: 'https://github.com/malet-pr/ejercicio-jenkins.git']],
-                            credentialsId: 'github-credentials'])
+                    checkout([
+                        $class: 'GitSCM', 
+                        branches: [
+                            [name: 'desarrollo'],
+                            [name: 'produccion']
+                        ], 
+                        doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
+                        userRemoteConfigs: [[url: 'https://github.com/malet-pr/ejercicio-jenkins.git']],
+                        credentialsId: 'github-credentials'
+                    ])
                 }
             }
         }
         stage('tests para vote-app') {
             steps {
                 script {
-                    sh 'echo No hay tests de vote-app'
+                    sh 'echo "No hay tests de vote-app"'
                 }
             }
         } 
@@ -47,66 +51,42 @@ pipeline {
                 }
             }
         }
-        stage('Construir imagen de result-app') {
+        stage('tests para result-app') {
+            steps {
+                script {
+                    docker.image(DOCKER_IMAGE_NAME_RESULT_TEST).inside("--workdir /app/tests") 
+                    docker.image(DOCKER_IMAGE_NAME_RESULT_TEST).run("--name $DOCKER_CONTAINER_NAME_RESULT_TEST -d")
+                    sh 'docker rm $DOCKER_CONTAINER_NAME_RESULT_TEST --force'
+                    sh 'docker rmi $DOCKER_IMAGE_NAME_RESULT_TEST'
+                }
+            }
+        }        
+        stage('Construir imagen de result-app y subirla a Docker Hub') {
             steps {
                 script {
                     docker.build(DOCKER_IMAGE_NAME_RESULT, "./result")
-                }
-            }
-        }
-/*         stage('Arrancar el contenedor de result-app') {
-            steps {
-                script {
-                    docker.image(DOCKER_IMAGE_NAME_RESULT).run("-p 5001:80 --name $DOCKER_CONTAINER_NAME_RESULT -d")
-                }
-            }
-        } */
-/*         stage('tests para result-app') {
-            steps {
-                script {
-                    docker.image(DOCKER_IMAGE_NAME_RESULT).inside("--workdir /app") {
-                        //sh 'python -m unittest discover'
-                        // comando para tests
-                    }
-                }
-            }
-        } */
-        stage('Subir imagen result-app'){
-            steps {
-                script {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
                         docker.image(DOCKER_IMAGE_NAME_RESULT).push()                       
                     }
-                    // sh 'docker stop $DOCKER_CONTAINER_NAME_RESULT'
-                    // sh 'docker rm $DOCKER_CONTAINER_NAME_RESULT' 
-                }
-            }
-        }
-
-        stage('Construir imagen de worker-app') {
-            steps {
-                script {
-                    docker.build(DOCKER_IMAGE_NAME_WORKER, "./worker")
                 }
             }
         }
         stage('tests para worker-app') {
             steps {
                 script {
-                    sh 'echo No hay tests de worker-app'
+                    sh 'echo "No hay tests de worker-app"'
                 }
             }
         } 
-        stage('Subir imagen worker-app'){
+        stage('Construir imagen de worker-app y subir a Docker Hub') {
             steps {
                 script {
+                    docker.build(DOCKER_IMAGE_NAME_WORKER, "./worker")
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
                         docker.image(DOCKER_IMAGE_NAME_WORKER).push()
-                    }                
-                }
+                    }                      
             }
         }
-
         stage('Deploy Redis') {
             steps {
                 script {
