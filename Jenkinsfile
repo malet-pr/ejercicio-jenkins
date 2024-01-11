@@ -105,7 +105,8 @@ pipeline {
         stage('Deploy Vote App') {
             steps {
                 script {
-                    sh 'kubectl apply -f ./kubernetes/vote-app.yaml -n voting-app'
+                    sh "envsubst < ./kubernetes/vote-app.yaml | kubectl apply -n voting-app -f -"
+                    //sh 'kubectl apply -f ./kubernetes/vote-app.yaml -n voting-app'
                 }
             }
         }
