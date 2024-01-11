@@ -138,7 +138,7 @@ pipeline {
     post {
         success {
             script {
-                def successMessage = 'El build #${BUILD_NUMBER} de jenkins sobre el pipeline ${env.JOB_NAME} se completó con éxito en ${currentBuild.getTimeInMillis()}'
+                def successMessage = '"Build #" + BUILD_NUMBER + " sobre el pipeline " + env.JOB_NAME + " terminó con éxito el " + new Date(currentBuild.getTimeInMillis())'
                 
                 sh """
                     curl -X POST -H 'Content-type: application/json' --data '{"content": "${successMessage}"}' ${DISCORD_WEBHOOK_URL}
@@ -147,7 +147,7 @@ pipeline {
         }
         failure {
             script {
-                def failureMessage = 'El build #${BUILD_NUMBER} de jenkins sobre el pipeline ${env.JOB_NAME} falló en ${currentBuild.getTimeInMillis()}'
+                def failureMessage = '"Build #" + BUILD_NUMBER + " sobre el pipeline " + env.JOB_NAME + " falló el " + new Date(currentBuild.getTimeInMillis())'
                 
                 sh """
                     curl -X POST -H 'Content-type: application/json' --data '{"content": "${failureMessage}"}' ${DISCORD_WEBHOOK_URL}
