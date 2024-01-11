@@ -17,12 +17,6 @@ pipeline {
         DOCKER_CONTAINER_NAME_WORKER = 'worker'   
         DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1195123870039019570/CF4atSic8tBkRhrvQyN-z66kG9MF2EPcPQzGlX8_KkOVPeSUy-qgys_Twh-da5hRDEE4"
     }
-
-    def formatDate(long timestamp) {
-        def sdf = new java.text.SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", new java.util.Locale("es", "ES"))
-        sdf.timeZone = TimeZone.getTimeZone("GMT-3")
-        return sdf.format(new Date(timestamp))
-    }
     
     stages {
         stage('Obtener repositorio') {
@@ -144,6 +138,11 @@ pipeline {
     post {
         success {
             script {
+                def formatDate(long timestamp) {
+                    def sdf = new java.text.SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", new java.util.Locale("es", "ES"))
+                    sdf.timeZone = TimeZone.getTimeZone("GMT-3")
+                    return sdf.format(new Date(timestamp))
+                }
                 def successMessage = "Build #" + BUILD_NUMBER + " del pipeline " + env.JOB_NAME + " termino con exito el " + formatDate(currentBuild.getTimeInMillis())
                 sh """
                     curl -X POST -H 'Content-type: application/json' --data '{"content": "${successMessage}"}' ${DISCORD_WEBHOOK_URL}
@@ -152,6 +151,11 @@ pipeline {
         }
         failure {
             script {
+                def formatDate(long timestamp) {
+                    def sdf = new java.text.SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", new java.util.Locale("es", "ES"))
+                    sdf.timeZone = TimeZone.getTimeZone("GMT-3")
+                    return sdf.format(new Date(timestamp))
+                }
                 def failureMessage = "Build #" + BUILD_NUMBER + " del pipeline " + env.JOB_NAME + " fallo el " + formatDate(currentBuild.getTimeInMillis())
                 sh """
                     curl -X POST -H 'Content-type: application/json' --data '{"content": "${failureMessage}"}' ${DISCORD_WEBHOOK_URL}
