@@ -64,9 +64,11 @@ pipeline {
         stage('Construir imagen de result-app y subirla a Docker Hub') {
             steps {
                 script {
-                    docker.build(DOCKER_IMAGE_NAME_RESULT, "./result")
-                    withDockerRegistry([credentialsId: 'dockerhub-credentials', url: 'https://registry.hub.docker.com']) {
-                        docker.image(DOCKER_IMAGE_NAME_RESULT).push()
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        docker.build(DOCKER_IMAGE_NAME_RESULT, "./result")
+                        docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                            docker.image(DOCKER_IMAGE_NAME_RESULT).push()
+                        }
                     }
                 }
             }
