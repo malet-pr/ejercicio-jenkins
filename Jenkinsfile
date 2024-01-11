@@ -88,6 +88,13 @@ pipeline {
                 }                     
             }
         }
+        stage('Instalar envsubst') {
+            steps {
+                script {
+                    sh 'apt-get update && apt-get install -y gettext-base'
+                }
+            }
+        }
         stage('Deploy Redis') {
             steps {
                 script {
