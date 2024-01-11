@@ -54,7 +54,7 @@ pipeline {
         stage('tests para result-app') {
             steps {
                 script {
-                    docker.image(DOCKER_IMAGE_NAME_RESULT_TEST).inside("--workdir /app/tests") 
+                    docker.build(DOCKER_IMAGE_NAME_RESULT_TEST, "./result/tests") 
                     docker.image(DOCKER_IMAGE_NAME_RESULT_TEST).run("--name $DOCKER_CONTAINER_NAME_RESULT_TEST -d")
                     sh 'docker rm $DOCKER_CONTAINER_NAME_RESULT_TEST --force'
                     sh 'docker rmi $DOCKER_IMAGE_NAME_RESULT_TEST'
