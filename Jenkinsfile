@@ -65,8 +65,9 @@ pipeline {
             steps {
                 script {
                     docker.build(DOCKER_IMAGE_NAME_RESULT, "./result")
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
-                        docker.image(DOCKER_IMAGE_NAME_RESULT).push()                       
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin https://registry.hub.docker.com"
+                        docker.image(DOCKER_IMAGE_NAME_RESULT).push()
                     }
                 }
             }
