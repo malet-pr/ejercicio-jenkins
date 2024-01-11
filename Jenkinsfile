@@ -134,6 +134,22 @@ pipeline {
             }
         }
     }
+    post {
+        success {
+            emailext(
+                to: 'maletq.pr@gmail.com',
+                subject: "Resultado Jenkins - ${currentBuild.fullDisplayName}",
+                body: "El pipeline de Jenkins terminó sin errores."
+            )
+        }
+        failure {
+            emailext(
+                to: 'maletq.pr@gmail.com',
+                subject: "Resultado Jenkins - ${currentBuild.fullDisplayName}",
+                body: "El pipeline de Jenkins terminó con errores."
+            )
+        }
+    }
 }
 
 
