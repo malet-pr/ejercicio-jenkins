@@ -141,7 +141,7 @@ pipeline {
                 def successMessage = "Build #" + BUILD_NUMBER + " del pipeline " + env.JOB_NAME + " termino con exito el " + new Date(currentBuild.getTimeInMillis())
                 
                 sh """
-                    curl -X POST -H 'Content-type: application/json' --data '{"content": "${successMessage}"}' ${discordWebhookUrl}
+                    curl -X POST -H 'Content-type: application/json' --data '{"content": "${successMessage}"}' ${DISCORD_WEBHOOK_URL}
                 """
             }
         }
