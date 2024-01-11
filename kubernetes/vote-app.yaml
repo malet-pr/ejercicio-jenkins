@@ -45,11 +45,10 @@ kind: Service
 metadata:
   name: vote-service
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: vote
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
-      nodePort: 30301
