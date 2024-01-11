@@ -138,16 +138,16 @@ pipeline {
     post {
         success {
             script {
-                def successMessage = '"Build #" + BUILD_NUMBER + " sobre el pipeline " + env.JOB_NAME + " terminó con éxito el " + new Date(currentBuild.getTimeInMillis())'
+                def successMessage = "Build #" + BUILD_NUMBER + " del pipeline " + env.JOB_NAME + " termino con exito el " + new Date(currentBuild.getTimeInMillis())
                 
                 sh """
-                    curl -X POST -H 'Content-type: application/json' --data '{"content": "${successMessage}"}' ${DISCORD_WEBHOOK_URL}
+                    curl -X POST -H 'Content-type: application/json' --data '{"content": "${successMessage}"}' ${discordWebhookUrl}
                 """
             }
         }
         failure {
             script {
-                def failureMessage = '"Build #" + BUILD_NUMBER + " sobre el pipeline " + env.JOB_NAME + " falló el " + new Date(currentBuild.getTimeInMillis())'
+                def failureMessage = "Build #" + BUILD_NUMBER + " del pipeline " + env.JOB_NAME + " fallo el " + new Date(currentBuild.getTimeInMillis())
                 
                 sh """
                     curl -X POST -H 'Content-type: application/json' --data '{"content": "${failureMessage}"}' ${DISCORD_WEBHOOK_URL}
